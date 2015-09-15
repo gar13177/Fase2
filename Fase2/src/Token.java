@@ -17,6 +17,10 @@ public class Token {
     protected int line;    //linea del token (inicia en 1)
     protected String val;  //valor del token
     protected Token next;  //referencia a siguiente token
+    
+    public Token(){
+        
+    }
 
     public int getKind() {
         return kind;
