@@ -38,5 +38,46 @@ public class Reader {
         }
     }
     
+    //lee el siguiente elemento del archivo
+    //mueve el puntero automaticamente
+    public int Read(){
+        try{
+            return file.read();
+        }catch (IOException e){
+            
+        }
+        return -1;
+    }
+    
+    //retorna el siguiente valor del archivo
+    //no mueve el puntero
+    public int Peek(){
+        try{
+            long pos = file.getFilePointer();
+            int temp = file.read();
+            file.seek(pos);
+            return temp;
+        }catch (IOException e){
+            
+        }
+        return -1;
+    }
+    
+    
+    public RandomAccessFile getFile() {
+        return file;
+    }
+
+    public void setFile(RandomAccessFile file) {
+        this.file = file;
+    }
+
+    public int getLengthF() {
+        return lengthF;
+    }
+
+    public void setLengthF(int lengthF) {
+        this.lengthF = lengthF;
+    }
     
 }
