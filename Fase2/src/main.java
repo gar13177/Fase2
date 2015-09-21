@@ -23,7 +23,10 @@ public class main {
         try{
             reader = new Reader("prueba.txt");
             parser = new Parser(reader);
-            System.out.println(parser.Cocol());
+            String str = "Archivo de evaluacion: prueba.txt\n";
+            str += "Para identificar errores revisar archivo: log.txt";
+            System.out.println("Valido: "+parser.Cocol());
+            System.out.println(str);
             
         } catch (IOException e){
             System.out.println(e.toString());
