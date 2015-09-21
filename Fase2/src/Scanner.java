@@ -10,10 +10,10 @@
  */
 public class Scanner {
     
-    private String txt;
-    
-    public Scanner(){
-        
+    public Scanner(String name){
+
     }
+    
+    
     
 }

@@ -1,6 +1,7 @@
 
+import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.util.Scanner;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -13,71 +14,71 @@ import java.io.RandomAccessFile;
  * @author Kevin
  */
 public class Reader {
-    private RandomAccessFile file;
-    private int lengthF;
     
-    public Reader(String name){
-        try{
-            file = new RandomAccessFile(name, "r");
-            lengthF = (int) file.length();
-            //suponemos que el archivo no esta vacio
-        }catch (IOException e){
-            throw new RuntimeException("No se puede abrir " + name);
+    private int length = 0;
+    private int index = 0;
+    private char[] charArray;
+    
+    public Reader(String namePath) throws IOException{
+        String theString = "";
+
+        File file = new File(namePath);
+        Scanner scanner = new Scanner(file);
+        theString = scanner.nextLine();
+        while (scanner.hasNextLine()) {
+               theString = theString + "\n" + scanner.nextLine();
         }
+        scanner.close();
+        
+        charArray = theString.toCharArray();
+        //System.out.println(charArray);
+        length = charArray.length;
     }
     
-    //cierre de archivo
-    public void Close(){
-        if (file!=null){
-            try{
-                file.close();
-                file= null;
-            }catch (IOException e){
-                throw new RuntimeException(e.getMessage());
+    public String Read(){
+        if (index < length){ 
+            //problema throw new IOException("Fuera de limites");
+            String _read = "";
+            int t = (int)charArray[index];
+
+            if (t == 10 || t == 32) ReadBlank();//salto de linea o espacio
+            if (charArray[index] == '"') return ReadString();
+            while ((int)charArray[index] != 10 && (int)charArray[index] != 32){
+                _read += charArray[index];
+                //System.out.println(_read);
+                index += 1;
+                if (index >= length) break;
             }
-        }
-    }
-    
-    //lee el siguiente elemento del archivo
-    //mueve el puntero automaticamente
-    public int Read(){
-        try{
-            return file.read();
-        }catch (IOException e){
-            
-        }
-        return -1;
-    }
-    
-    //retorna el siguiente valor del archivo
-    //no mueve el puntero
-    public int Peek(){
-        try{
-            long pos = file.getFilePointer();
-            int temp = file.read();
-            file.seek(pos);
-            return temp;
-        }catch (IOException e){
-            
-        }
-        return -1;
-    }
-    
-    
-    public RandomAccessFile getFile() {
-        return file;
-    }
 
-    public void setFile(RandomAccessFile file) {
-        this.file = file;
+            return _read;
+        }
+        return "";
     }
-
-    public int getLengthF() {
-        return lengthF;
+    
+    //salta espacios en blanco
+    public void ReadBlank(){
+        while ((int)charArray[index] == 10 || (int)charArray[index] == 32){
+            //System.out.println((int) charArray[index]);
+            index += 1;
+            if (index >= length) break;
+        } 
     }
-
-    public void setLengthF(int lengthF) {
-        this.lengthF = lengthF;
+    
+    public String ReadString(){
+        index += 1;//se salta la comilla
+        String _read = "";
+        while (charArray[index] != '"'){
+            _read += charArray[index];
+            index += 1;
+        }
+        index += 1;//se salta la ultima comilla
+        return _read;
     }
+    
+    public int getLength(){
+        return length;
+    }
+    
+    
     
 }
