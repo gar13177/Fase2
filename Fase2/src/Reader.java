@@ -18,6 +18,8 @@ public class Reader {
     private int length = 0;
     private int index = 0;
     private char[] charArray;
+    private int column = 1;
+    private int line = 1;
     
     public Reader(String namePath) throws IOException{
         String theString = "";
@@ -49,9 +51,10 @@ public class Reader {
                 index += 1;
                 if (index >= length) break;
             }
-
+            //System.out.println(_read);
             return _read;
         }
+        System.out.println("---");
         return "";
     }
     
@@ -65,13 +68,16 @@ public class Reader {
     }
     
     public String ReadString(){
-        index += 1;//se salta la comilla
-        String _read = "";
+        //index += 1;//se salta la comilla
+        String _read = ""+'"';
+        index += 1;
         while (charArray[index] != '"'){
             _read += charArray[index];
             index += 1;
         }
-        index += 1;//se salta la ultima comilla
+        _read += charArray[index];
+        index += 1;//se guarda string con comillas
+        //System.out.println(_read);
         return _read;
     }
     
@@ -79,6 +85,13 @@ public class Reader {
         return length;
     }
     
+    public int getIndex(){
+        return index;
+    }
+    
+    public void setIndex(int index){
+        this.index = index;
+    } 
     
     
 }
