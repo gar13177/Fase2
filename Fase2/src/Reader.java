@@ -45,6 +45,7 @@ public class Reader {
 
             if (t == 10 || t == 32) ReadBlank();//salto de linea o espacio
             if (charArray[index] == '"') return ReadString();
+            if (charArray[index] == '\'') return ReadChar();
             while ((int)charArray[index] != 10 && (int)charArray[index] != 32){
                 _read += charArray[index];
                 //System.out.println(_read);
@@ -54,7 +55,7 @@ public class Reader {
             //System.out.println(_read);
             return _read;
         }
-        System.out.println("---");
+        
         return "";
     }
     
@@ -72,6 +73,20 @@ public class Reader {
         String _read = ""+'"';
         index += 1;
         while (charArray[index] != '"'){
+            _read += charArray[index];
+            index += 1;
+        }
+        _read += charArray[index];
+        index += 1;//se guarda string con comillas
+        //System.out.println(_read);
+        return _read;
+    }
+    
+    public String ReadChar(){
+        
+        String _read = "'";
+        index += 1;
+        while (charArray[index] != '\''){
             _read += charArray[index];
             index += 1;
         }

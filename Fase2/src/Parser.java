@@ -162,12 +162,66 @@ public class Parser {
         }else{//es string
             return true;
         }
-        
+        //PROBLEMA PORQUE CHR ES ident
+        //--------------------------
+        //---------------------------
         if (!result){//no es ident
             reader.setIndex(tempindex);
+            result = Char();
+        }else {//es ident
+            return true;
+        }
+        
+        if (!result){//no es char
+            reader.setIndex(tempindex);
+            
+            return false;//no es alguno de los 3
+        }else{//si es char
+            tempindex = reader.getIndex(); //ya hay un char valido
+            result = reader.Read().equals("..");
+            result = result && Char();
+        }
+        
+        
+        if(!result){// no continua algo despues de char pero ya hay char
+            reader.setIndex(tempindex);   
+        }
+
+        return true;
+    }
+    
+    public boolean Char(){
+        
+        boolean result;
+        int tempindex = reader.getIndex();
+        
+        if (isChar()){//es char
+            return true;
+        }else{//no es char
+            
+            reader.setIndex(tempindex);
+            result = reader.Read().equals("CHR");
+            
+            result = result && reader.Read().equals("(");//sigue un parentesis
+            result = result && isNumber();
+            result = result && reader.Read().equals(")");//sigue un parentesis
+        }
+        
+        if (!result){//no se cumple
             return false;
         }
-        //falta verificar si es Char
+                
+        return true;
+    }
+    
+    public boolean isChar(){
+        String temp = reader.Read();
+        
+        if (temp.charAt(0)!= '\'' || temp.charAt(temp.length()-1) != '\'' )
+            return false; //no es char
+        
+        if (temp.length()!=3)
+            return false; //es mas largo que char
         
         return true;
     }
@@ -215,6 +269,7 @@ public class Parser {
     
     public boolean isIdent(){
         String temp = reader.Read();
+        if (temp.equals("CHR")) return false;//caso desesperado
         boolean result = letterU.contains(""+temp.charAt(0)) || letterL.contains(""+temp.charAt(0));
         
         for (int i = 0; i < temp.length(); i++){
