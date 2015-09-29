@@ -5,13 +5,18 @@ CHARACTERS
 letter = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" .
 digit = "0123456789" .
 hexdigit = digit + "ABCDEF" .
-another = CHR ( 1212 ) .. 'a' .
+
 
 KEYWORDS
 if = "if" .
 while = "while" .
+do = "do" .
+for = "for" .
+
 
 END Ejemplo .
+
+
 
 
 
