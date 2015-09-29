@@ -183,7 +183,7 @@ public class Parser {
                 if (temp.equals("+")){//si es mas
                     tempVal += construct;
                 }else{//solo podria pasar si es '-'
-                    tempVal = tempVal.replaceAll(construct, "");//quitamos los caracteres comunes
+                    tempVal = tempFunc(construct,tempVal);//quitamos los caracteres comunes
                 }
             }
         }while (bool);
@@ -354,6 +354,14 @@ public class Parser {
     
     public ArrayList getTokens(){
         return conjunto;
+    }
+    
+    private String tempFunc(String chars, String del){
+        char[] chart = chars.toCharArray();
+        for (char cr: chart){
+            del = del.replaceAll(""+cr, "");
+        }
+        return del;
     }
     
 }
