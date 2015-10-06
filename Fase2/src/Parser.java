@@ -26,6 +26,8 @@ public class Parser {
     private ArrayList<String> token;//token temporal
     private String construct;//construct temporal para token
     
+    private boolean priority = false;//valor EXCEPT KEYWORDS
+    
     public Parser(Reader reader){
         this.reader = reader;
     }
@@ -125,8 +127,195 @@ public class Parser {
         }
         reader.setIndex(indextemp);
         
+        indextemp = reader.getIndex();//por si no hay KEYWORDS
+        if (!reader.Read().equals("TOKENS")){
+            reader.setIndex(indextemp);//no esta keywords, entonces no hay
+        }else{//si esta 
+            indextemp = reader.getIndex();//guardo el siguiente indice
+            token = new ArrayList();
+            construct = "";
+            while (TokenDecl()){//mientras se lea un TokenDecl
+                construct = "";
+                token = new ArrayList();
+                indextemp = reader.getIndex();//se obtiene el inidice nuevo
+                
+            }
+            //reader.setIndex(indextemp);//cuando se termina de leer SetDecl
+            //se guarda ultimo indice valido
+        }
+        reader.setIndex(indextemp);
+        
         return val;
     }
+    
+    //-------------------------------
+    
+    public boolean TokenDecl(){
+        int tempindex = reader.getIndex();
+        if (!isIdent()){//si no es ident el proximo pedazo, return false
+            return false;
+        }
+        
+        //como sabemos que es ident
+        construct = "";
+        reader.setIndex(tempindex);//retornamos lectura
+        construct = reader.Read();//lo que retorna sera el ident        
+        token.add(construct);//construct ya tiene guardado ident
+        construct = "";//vaciamos construct
+        
+        tempindex = reader.getIndex();//tomamos index
+        if (reader.Read().equals("=")){//existe un =
+            if (TokenExpr()){//si lo que sigue es un TokenExpr
+                //construct ya tiene guardado lo que sigue
+                
+            }else{//de lo contrario se retorna posicion
+                reader.setIndex(tempindex);
+            }
+        }else{
+            //ya debe existir ese ident
+            reader.setIndex(tempindex);//retornamos posicion
+        }
+        
+        tempindex = reader.getIndex();
+        if (reader.Read().equals("EXCEPT")){
+            if (reader.Read().equals("KEYWORDS")){
+                construct+="°";//valor para reconocer except
+            }else{
+                reader.setIndex(tempindex);
+            }
+        }else{
+            reader.setIndex(tempindex);
+        }
+        
+        if (!reader.Read().equals(".")){//si no termina con punto
+            return false;
+        }
+        token.add(construct);
+        conjunto.add(token);
+        return true;
+    }
+    
+    public boolean TokenExpr(){
+        construct = "";
+        if (!TokenTerm()){
+            return false;//no cumple con la primera 
+        }//tokenterm ya tiene construct lo que contiene
+        
+        String temp = construct;//guardo construct en temp
+        construct = "";
+        int tempindex = reader.getIndex();
+        boolean condition = true;
+        do{
+            tempindex = reader.getIndex();//se guarda el indice actual
+            condition = reader.Read().equals("|");//se busca que haya un or
+            condition = condition && TokenTerm();//si sigue de TokenTerm, esta bien
+            if (condition){//si lleva un OR y token term, se agrega
+                temp += "|"+construct;
+            }
+            construct = "";
+        }while(condition);
+        reader.setIndex(tempindex);//se retorna al ultimo indice valido
+        construct = temp;
+        
+        return true;
+    }
+    
+    public boolean TokenTerm(){
+        construct = "";
+        if(!TokenFactor()){//si no es token factor
+            return false;//primera condicion no valida
+        }//token factor tiene en construct lo que contiene
+        
+        int tempindex = reader.getIndex();
+        String temp = construct;//guardo en temporal el construct
+        construct = "";
+        boolean condition = true;
+        do{
+            tempindex = reader.getIndex();//se guarda el indice actual
+            condition = TokenFactor();//mientras sea TokenFactor
+            if (condition){//si es token factor
+                temp += construct;
+            }
+            construct = "";
+        }while(condition);
+        reader.setIndex(tempindex);//se retorna al ultimo indice valido
+        construct = temp;
+        
+        return true;
+    }
+    
+    public boolean TokenFactor(){
+        
+        int tempindex = reader.getIndex();
+        if (Symbol()){//contruct ya tiene lo que es
+            return true;
+        }
+        
+        reader.setIndex(tempindex);//retornamos a posicion inicial
+        String temp = construct;//guardo en un temporal 
+        construct = "";
+        if (reader.Read().equals("(")){
+            if (TokenExpr()){
+                if (reader.Read().equals(")")){
+                    reader.setIndex(tempindex);//retorno a la primera posicion
+                    temp += reader.Read()+reader.Read()+reader.Read();//agrego los dos parentesis y lo que contiene
+                    construct = temp;
+                    return true;
+                }
+            }
+        }
+        
+        reader.setIndex(tempindex);
+        if (reader.Read().equals("[")){
+            if(TokenExpr()){
+                if (reader.Read().equals("]")){
+                    reader.setIndex(tempindex);//retorno a la primera posicion
+                    temp += reader.Read()+reader.Read()+reader.Read();//agrego los dos parentesis y lo que contiene
+                    construct = temp;
+                    return true;
+                }
+            }
+        }
+        
+        reader.setIndex(tempindex);
+        if (reader.Read().equals("{")){
+            if (TokenExpr()){
+                if (reader.Read().equals("}")){
+                    reader.setIndex(tempindex);//retorno a la primera posicion
+                    temp += reader.Read()+reader.Read()+reader.Read();//agrego los dos parentesis y lo que contiene
+                    construct = temp;
+                    return true;
+                }
+            }
+        }
+        
+        reader.setIndex(tempindex);//no estoy seguro que sea necesario
+        return false;
+    }
+    
+    public boolean Symbol(){
+        int tempindex = reader.getIndex();
+        if (isIdent()){
+            reader.setIndex(tempindex);
+            construct += reader.Read();//se agrega ident
+            return true;//construct ya tiene guardado ident
+        }
+        
+        reader.setIndex(tempindex);
+        if(isString()){//construct ya tiene guardado string
+            return true;
+        }
+        
+        reader.setIndex(tempindex);
+        if(isChar()){//saber
+            return true;
+        }
+        reader.setIndex(tempindex);//no estoy seguro si es necesario
+        
+        return false;
+    }
+    
+    //-------------------------------
     
     public boolean SetDecl(){
         int tempindex = reader.getIndex();
@@ -343,6 +532,14 @@ public class Parser {
     public boolean isIdent(){
         String temp = reader.Read();
         if (temp.equals("CHR")) return false;//caso desesperado
+        if (temp.equals("EXCEPT")){
+            int tempindex = reader.getIndex();
+            String temp2 = reader.Read();
+            if (temp2.equals("KEYWORDS")){//quiere decir que hay escrito EXCEPT KEYWORDS
+                reader.setIndex(tempindex);
+                return false;
+            }
+        }
         boolean result = letterU.contains(""+temp.charAt(0)) || letterL.contains(""+temp.charAt(0));
         
         for (int i = 0; i < temp.length(); i++){

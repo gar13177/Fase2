@@ -13,6 +13,11 @@ while = "while" .
 do = "do" .
 for = "for" .
 
+TOKENS
+id = letter { letter } EXCEPT .
+number = digit { digit } .
+hexnumber = hexdigit { hexdigit } "(H)" .
+
 
 END Ejemplo .
 
