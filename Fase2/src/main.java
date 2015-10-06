@@ -32,7 +32,24 @@ public class main {
             String str = "Para identificar errores revisar archivo: log.txt";
             boolean succ = parser.Cocol();
             System.out.println("Valido: "+succ);
-            System.out.println(str);  
+            System.out.println(str);
+            
+            if (succ){// lectura con exito
+                System.out.println("Ingrese nombre de archivo para lexear");
+                name = input.nextLine();
+                if (!name.contains(".txt")) name += ".txt";
+                reader = new Reader(name);//archivo de entrada
+                code = new CodeGenerator(reader,parser.getTokens());
+                System.out.println("Valido: "+code.TryCode());
+                
+                /**
+                 * por el momento solo tengo conjuntos
+                 * el parser tendria que devolver un listado de conjuntos
+                 * luego la lectura solo es recorrer caracter por caracter
+                 * revisar a que conjunto pertenece cada uno
+                 */
+            }
+            
         } catch (IOException e){
             System.out.println(e.toString());
         }

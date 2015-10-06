@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
 
@@ -27,8 +26,6 @@ public class Parser {
     private ArrayList<String> token;//token temporal
     private String construct;//construct temporal para token
     
-    Scanner input = new Scanner(System.in);
-    
     public Parser(Reader reader){
         this.reader = reader;
     }
@@ -49,8 +46,6 @@ public class Parser {
         }else{//como es ident
             reader.setIndex(indextemp);
             ident = reader.Read();
-            System.out.println("COMPILER: "+ident+"\nPresione Intro para continuar");
-            input.nextLine();
         }
         
         
@@ -90,7 +85,7 @@ public class Parser {
     public boolean ScannerSpecification(){
         boolean val = true;
         int indextemp;
-        int conjuntoindex = 0;
+        
         indextemp = reader.getIndex();//por si no hay CHARACTERS
         if (!reader.Read().equals("CHARACTERS")){
             reader.setIndex(indextemp);//no esta characters, entonces no hay
@@ -106,14 +101,6 @@ public class Parser {
                 indextemp = reader.getIndex();//se obtiene el inidice nuevo
                 
             }
-            System.out.println("CHARACTERS: ");
-            
-            for (ArrayList arr: conjunto){
-                System.out.println(arr);
-                conjuntoindex += 1;
-            }
-            System.out.println("Presione Intro para continuar");
-            input.nextLine();
         }
         reader.setIndex(indextemp);
         token = new ArrayList();
@@ -135,13 +122,6 @@ public class Parser {
             }
             //reader.setIndex(indextemp);//cuando se termina de leer SetDecl
             //se guarda ultimo indice valido
-            System.out.println("KEYWORDS: ");
-            for (int k = conjuntoindex; k < conjunto.size(); k++){
-                System.out.println(conjunto.get(k));
-            }
-            System.out.println("Presione Intro para continuar");
-            input.nextLine();
-            
         }
         reader.setIndex(indextemp);
         
