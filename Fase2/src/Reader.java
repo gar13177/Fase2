@@ -108,5 +108,15 @@ public class Reader {
         this.index = index;
     } 
     
+    public int ReadUnit(){
+        if (index == length) return -1;
+        return charArray[index++];
+    }
+    
+    public int Peek(){
+        if (index == length) return -1;
+        return charArray[index];
+    }
+    
     
 }
